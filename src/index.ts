@@ -1,7 +1,8 @@
-import { Context } from "hono";
-import { HonoPassportStrategy, PassportError } from "@maca134/hono-passport";
-import { OAuth2StrategyOptions, oauth2Strategy } from "@maca134/hono-passport-oauth2";
-
+import type { HonoPassportStrategy } from '@maca134/hono-passport';
+import { PassportError } from '@maca134/hono-passport';
+import type { OAuth2StrategyOptions } from '@maca134/hono-passport-oauth2';
+import { oauth2Strategy } from '@maca134/hono-passport-oauth2';
+import type { Context } from 'hono';
 
 export type BNetStrategyOptions = {
 	clientID: string;
@@ -18,10 +19,7 @@ export type BNetUserInfo = {
 
 export function bnetStrategy<TUser>(
 	options: BNetStrategyOptions,
-	validate: (
-		ctx: Context,
-		info: BNetUserInfo,
-	) => Promise<TUser | undefined>,
+	validate: (ctx: Context, info: BNetUserInfo) => Promise<TUser | undefined>
 ): HonoPassportStrategy<TUser> {
 	const strategy = oauth2Strategy(
 		{
@@ -45,9 +43,9 @@ export function bnetStrategy<TUser>(
 			if (response.status !== 200) {
 				throw new PassportError('Failed to fetch user info');
 			}
-			const info = await response.json() as BNetUserInfo;
+			const info = (await response.json()) as BNetUserInfo;
 			return validate(ctx, info);
-		},
+		}
 	);
 	return {
 		...strategy,
